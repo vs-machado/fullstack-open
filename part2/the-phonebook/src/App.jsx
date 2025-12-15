@@ -8,6 +8,13 @@ const App = () => {
 
   const addContact = (event) => {
     event.preventDefault()
+
+    const alreadyAdded = persons.some(person => person.name === newName)
+    if (alreadyAdded) {
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
+
     const newPerson = { name: newName }
     setPersons(persons.concat(newPerson))
     setNewName('')
