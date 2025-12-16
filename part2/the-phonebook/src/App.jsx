@@ -2,9 +2,11 @@ import { useState } from 'react'
 import Filter from './pages/phonebook/Filter'
 import AddContact from './pages/phonebook/AddContact'
 import ContactList from './pages/phonebook/ContactList'
+import { useEffect } from 'react'
+import axios from 'axios'
 
-const App = (props) => {
-  const [persons, setPersons] = useState(props.persons)
+const App = () => {
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
@@ -36,6 +38,14 @@ const App = (props) => {
   }
 
   const contactsToShow = filter === '' ? persons : persons.filter( person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()) )
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   return (
     <div>
