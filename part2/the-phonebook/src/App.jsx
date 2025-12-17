@@ -41,8 +41,18 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const onDeleteContact = (id) => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      contactsService
+        .deleteContact(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
+
   const contactsToShow = filter === '' ? persons : persons.filter( person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()) )
-  console.log('', contactsToShow)
 
   useEffect(() => {
     contactsService
@@ -59,7 +69,7 @@ const App = () => {
       <h3>add a new</h3>    
       <AddContact addContact={addContact} newName={newName} newNumber={newNumber} handleContactChange={handleContactChange} handleNumberChange={handleNumberChange}/>
       <h3>Numbers</h3>  
-      <ContactList contactsToShow={contactsToShow} />
+      <ContactList contactsToShow={contactsToShow} onDeleteContact={onDeleteContact}/>
     </div>
   )
 }

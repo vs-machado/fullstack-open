@@ -1,8 +1,10 @@
+import Contact from './Contact'
+
 const ContactList = (props) => {
     return (
         <>
             { props.contactsToShow.map ( person => 
-                <p key={person.name}>{person.name} {person.number}</p>
+                <Contact key={person.id} name={person.name} number={person.number} onDeleteContact={() => props.onDeleteContact(person.id)} />
             ) }
         </>
     )
