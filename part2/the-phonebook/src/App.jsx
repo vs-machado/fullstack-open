@@ -28,6 +28,10 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .catch(() => {
+          setNotification({ message: `Information of ${newPerson.name} has already been removed from server`, type: NotificationType.ERROR })
+          setPersons(persons.filter(p => p.id !== person.id))
+        })
       return
     }
     
@@ -60,6 +64,12 @@ const App = () => {
         .deleteContact(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch( error => {
+          if (error.status === 404) {
+            setNotification({ message: `${person.name} contact not found on server.`, type: NotificationType.ERROR })
+            setPersons(persons.filter(p => p.id !== person.id)) 
+          }
         })
     }
   }
