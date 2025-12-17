@@ -13,13 +13,20 @@ const App = () => {
   const addContact = (event) => {
     event.preventDefault()
 
-    const alreadyAdded = persons.some(person => person.name === newName || person.number === newNumber)
-    if (alreadyAdded) {
-      alert(`${newName} is already added to phonebook`)
+    const alreadyAdded = persons.some(person => person.name === newName)
+    const person = persons.find(person => person.name === newName)
+    const newPerson = { name: newName, number: newNumber }
+    if (alreadyAdded && (window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`))) {
+      contactsService
+        .update(person.id, newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+          setNewName('')
+          setNewNumber('')
+        })
       return
     }
-
-    const newPerson = { name: newName, number: newNumber }
+    
     contactsService
       .create(newPerson)
       .then(returnedPerson => { 
