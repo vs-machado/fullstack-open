@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Filter from './pages/phonebook/Filter'
 import AddContact from './pages/phonebook/AddContact'
 import ContactList from './pages/phonebook/ContactList'
-import { useEffect } from 'react'
-import axios from 'axios'
+import contactsService from "./services/contacts"
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -20,9 +19,14 @@ const App = () => {
       return
     }
 
-    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
-    setPersons(persons.concat(newPerson))
-    setNewName('')
+    const newPerson = { name: newName, number: newNumber }
+    contactsService
+      .create(newPerson)
+      .then(returnedPerson => { 
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleContactChange = (event) => {
@@ -38,12 +42,13 @@ const App = () => {
   }
 
   const contactsToShow = filter === '' ? persons : persons.filter( person => person.name.toLowerCase().includes(filter.toLocaleLowerCase()) )
+  console.log('', contactsToShow)
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    contactsService
+      .getAll()
+      .then(persons => {
+        setPersons(persons)
       })
   }, [])
 
