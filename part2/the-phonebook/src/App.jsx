@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react'
-import Filter from './pages/phonebook/Filter'
-import AddContact from './pages/phonebook/AddContact'
-import ContactList from './pages/phonebook/ContactList'
+import Filter from './pages/components/phonebook/Filter'
+import AddContact from './pages/components/phonebook/AddContact'
+import ContactList from './pages/components/phonebook/ContactList'
 import contactsService from "./services/contacts"
+import Notification from './pages/components/notifications/Notification'
+import { NotificationType } from './constants/notificationType'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [notification, setNotification] = useState({ message: null, type: null })
 
   const addContact = (event) => {
     event.preventDefault()
@@ -21,6 +24,7 @@ const App = () => {
         .update(person.id, newPerson)
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+          setNotification({ message: `${newPerson.name} number updated.`, type: NotificationType.SUCCESS }) 
           setNewName('')
           setNewNumber('')
         })
@@ -31,6 +35,7 @@ const App = () => {
       .create(newPerson)
       .then(returnedPerson => { 
         setPersons(persons.concat(returnedPerson))
+        setNotification({ message: `Added ${newPerson.name}`, type: NotificationType.SUCCESS })
         setNewName('')
         setNewNumber('')
       })
@@ -71,7 +76,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>  
+      <h2>Phonebook</h2>
+      <Notification notification={notification} />  
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <h3>add a new</h3>    
       <AddContact addContact={addContact} newName={newName} newNumber={newNumber} handleContactChange={handleContactChange} handleNumberChange={handleNumberChange}/>
