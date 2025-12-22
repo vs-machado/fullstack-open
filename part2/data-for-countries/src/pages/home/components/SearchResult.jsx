@@ -6,7 +6,6 @@ import CountryItem from "./CountryItem"
  */
 const SearchResult =  ({ countries }) => {
     const countryCount = countries.length
-    console.log(countryCount)
 
     if(countryCount === 1) return <CountryData country={countries[0]} /> 
 

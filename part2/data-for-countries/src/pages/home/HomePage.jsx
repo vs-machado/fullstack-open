@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import countriesService from '../../services/countriesApi'
+import countriesService from '../../services/api/countries'
 import SearchResult from '../../pages/home/components/SearchResult'
 
 const HomePage = () => {
@@ -16,7 +16,6 @@ const HomePage = () => {
     setSearchText(value)
 
     const filteredList = countries.filter(country => country.name.common.toLowerCase().includes(value.toLocaleLowerCase()))
-    console.log(filteredList)
     setFilteredCountries(filteredList)
   }
 
