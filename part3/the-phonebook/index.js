@@ -31,10 +31,18 @@ app.get('/api/persons', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const person = request.body
+    console.log(person)
 
     if (!person.name || !person.number) {
         return response.status(400).json({ 
-            error: 'content missing' 
+            error: 'Name and number information are mandatory' 
+        })
+    }
+
+    const personDataAlreadyInserted = persons.some(item => item.name == `${person.name}`)
+    if(personDataAlreadyInserted) {
+        return response.status(400).json({ 
+            error: 'This name was already inserted in the phonebook' 
         })
     }
 
