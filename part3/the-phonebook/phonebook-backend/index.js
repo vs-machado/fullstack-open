@@ -8,6 +8,7 @@ morgan.token('req-body', (req) => JSON.stringify(req.body))
 const morganFormat = morgan(':method :url :status :res[content-length] - :response-time ms :req-body')
 
 app.use(morganFormat)
+app.use(express.static('dist'))
 
 let persons = [
     { 
