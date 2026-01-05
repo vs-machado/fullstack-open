@@ -1,0 +1,1 @@
+Deployed application url (exercise 3.10): https://fullstack-open-isln.onrender.com
