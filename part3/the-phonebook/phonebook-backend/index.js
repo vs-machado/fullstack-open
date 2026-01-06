@@ -3,6 +3,7 @@ require('dotenv').config()
 const express = require('express')
 var morgan = require('morgan')
 const Contact = require('./models/contact')
+const { default: mongoose } = require('mongoose')
 
 const app = express()
 app.use(express.json())
@@ -12,29 +13,6 @@ const morganFormat = morgan(':method :url :status :res[content-length] - :respon
 
 app.use(morganFormat)
 app.use(express.static('dist'))
-
-let persons = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
 
 app.get('/api/persons', (request, response) => {
     Contact.find({}).then(contacts => {
@@ -52,17 +30,13 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const personDataAlreadyInserted = persons.some(item => item.name == `${person.name}`)
-    if(personDataAlreadyInserted) {
-        return response.status(400).json({ 
-            error: 'This name was already inserted in the phonebook' 
-        })
-    }
-
-    person.id = String(Math.floor(Math.random() * 100000))
-    persons = persons.concat(person)
-
-    response.json(person)
+    const contact = new Contact({
+        name: person.name,
+        number: person.number
+    })
+    contact.save().then((result) => {
+        response.json(result)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
