@@ -61,6 +61,24 @@ app.delete('/api/persons/:id', (request, response, next) => {
         .catch(error => next(error))
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+    const person = request.body
+    Contact.findById(request.params.id)
+        .then(contact => {
+            if(!contact) {
+                return response.status(404).end()
+            }
+
+            contact.name = person.name
+            contact.number = person.number
+
+            return contact.save().then((updatedContact)=> {
+                response.json(updatedContact)
+            })
+        })
+        .catch(error => next(error))
+})
+
 app.get('/info', (request, response) => {
     const peopleCount = persons.length
     const date = Date().toString()
