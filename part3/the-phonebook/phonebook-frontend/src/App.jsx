@@ -43,6 +43,11 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        if(error.response.status === 400) {
+          setNotification({ message: "ERROR: The name must be at least 3 characters long.", type: NotificationType.ERROR })
+        }
+      })
   }
 
   const handleContactChange = (event) => {
