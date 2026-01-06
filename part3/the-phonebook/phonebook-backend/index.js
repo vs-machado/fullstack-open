@@ -3,7 +3,6 @@ require('dotenv').config()
 const express = require('express')
 var morgan = require('morgan')
 const Contact = require('./models/contact')
-const { default: mongoose } = require('mongoose')
 
 const app = express()
 app.use(express.json())
@@ -14,13 +13,15 @@ const morganFormat = morgan(':method :url :status :res[content-length] - :respon
 app.use(morganFormat)
 app.use(express.static('dist'))
 
-app.get('/api/persons', (request, response) => {
-    Contact.find({}).then(contacts => {
-        response.json(contacts)
-    })
+app.get('/api/persons', (request, response, next) => {
+    Contact.find({})
+        .then(contacts => {
+            response.json(contacts)
+        })
+        .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const person = request.body
     console.log(person)
 
@@ -34,9 +35,11 @@ app.post('/api/persons', (request, response) => {
         name: person.name,
         number: person.number
     })
-    contact.save().then((result) => {
-        response.json(result)
-    })
+    contact.save()
+        .then((result) => {
+            response.json(result)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -50,11 +53,12 @@ app.get('/api/persons/:id', (request, response) => {
     response.json(person)
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     Contact.findByIdAndDelete(request.params.id)
         .then(result => {
             response.status(204).end()
         })
+        .catch(error => next(error))
 })
 
 app.get('/info', (request, response) => {
@@ -63,6 +67,22 @@ app.get('/info', (request, response) => {
     response.send(
         `<p>Phonebook has info for ${peopleCount} people</p><p>${date}</p>`)
 })
+
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if(error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+
+    return response.status(500).send({ error: 'A server error occurred. Try again later.' })
+}
+app.use(unknownEndpoint)
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
