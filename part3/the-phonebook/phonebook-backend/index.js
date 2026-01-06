@@ -42,15 +42,15 @@ app.post('/api/persons', (request, response, next) => {
         .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(person => person.id === id)
-
-    if(!person) {
-        response.status(404).end()
-        return
-    }
-    response.json(person)
+app.get('/api/persons/:id', (request, response, next) => {
+    Contact.findById(request.params.id)
+        .then(contact => {
+            if(!contact) {
+                return response.status(404).end()
+            }
+            return response.json(contact)
+        })
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -90,7 +90,7 @@ const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
 }
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, request, response) => {
     console.error(error.message)
 
     if(error.name === 'CastError') {
