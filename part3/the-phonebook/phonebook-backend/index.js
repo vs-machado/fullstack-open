@@ -14,97 +14,99 @@ app.use(morganFormat)
 app.use(express.static('dist'))
 
 app.get('/api/persons', (request, response, next) => {
-    Contact.find({})
-        .then(contacts => {
-            response.json(contacts)
-        })
-        .catch(error => next(error))
+  Contact.find({})
+    .then(contacts => {
+      response.json(contacts)
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {
-    const person = request.body
-    console.log(person)
+  const person = request.body
+  console.log(person)
 
-    if (!person.name || !person.number) {
-        return response.status(400).json({ 
-            error: 'Name and number information are mandatory' 
-        })
-    }
-
-    const contact = new Contact({
-        name: person.name,
-        number: person.number
+  if (!person.name || !person.number) {
+    return response.status(400).json({
+      error: 'Name and number information are mandatory'
     })
-    contact.save()
-        .then((result) => {
-            response.json(result)
-        })
-        .catch(error => next(error))
+  }
+
+  const contact = new Contact({
+    name: person.name,
+    number: person.number
+  })
+  contact.save()
+    .then((result) => {
+      response.json(result)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-    Contact.findById(request.params.id)
-        .then(contact => {
-            if(!contact) {
-                return response.status(404).end()
-            }
-            return response.json(contact)
-        })
-        .catch(error => next(error))
+  Contact.findById(request.params.id)
+    .then(contact => {
+      if (!contact) {
+        return response.status(404).end()
+      }
+      return response.json(contact)
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
-    Contact.findByIdAndDelete(request.params.id)
-        .then(result => {
-            response.status(204).end()
-        })
-        .catch(error => next(error))
+  Contact.findByIdAndDelete(request.params.id)
+    .then(() => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    const person = request.body
-    Contact.findById(request.params.id)
-        .then(contact => {
-            if(!contact) {
-                return response.status(404).end()
-            }
+  const person = request.body
+  Contact.findById(request.params.id)
+    .then(contact => {
+      if (!contact) {
+        return response.status(404).end()
+      }
 
-            contact.name = person.name
-            contact.number = person.number
+      contact.name = person.name
+      contact.number = person.number
 
-            return contact.save().then((updatedContact)=> {
-                response.json(updatedContact)
-            })
-        })
-        .catch(error => next(error))
+      return contact.save().then((updatedContact) => {
+        response.json(updatedContact)
+      })
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response) => {
-    const peopleCount = persons.length
+  Contact.find({}).then(contacts => {
+    const peopleCount = contacts.length
     const date = Date().toString()
-    response.send(
-        `<p>Phonebook has info for ${peopleCount} people</p><p>${date}</p>`)
+    response.send(`<p>Phonebook has info for ${peopleCount} people</p><p>${date}</p>`)
+  })
 })
 
 const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
+  response.status(404).send({ error: 'unknown endpoint' })
 }
 
+// eslint-disable-next-line no-unused-vars
 const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
+  console.error(error.message)
 
-    if(error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
-    } else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message })
-    }
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
 
-    return response.status(500).send({ error: 'A server error occurred. Try again later.' })
+  return response.status(500).send({ error: 'A server error occurred. Try again later.' })
 }
 app.use(unknownEndpoint)
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
