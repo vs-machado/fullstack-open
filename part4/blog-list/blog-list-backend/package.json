@@ -6,6 +6,7 @@
     "mongoose": "^9.1.2"
   },
   "scripts": {
-    "dev": "node index.js --watch"
+    "dev": "node index.js --watch",
+    "test": "node --test"
   }
 }
