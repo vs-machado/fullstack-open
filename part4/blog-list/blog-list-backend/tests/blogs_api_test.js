@@ -36,6 +36,28 @@ test('blogs get responses returns objects with id parameter instead of _id', asy
   assert.ok('id' in response.body[0])
 })
 
+test('post request to blogs endpoint successfully creates a new blog post', async () => {
+  const newBlogPost = {
+    title: 'test',
+    author: 'someone',
+    url: 'www.google.com',
+    likes: 3
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogPost)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  // verifies if the blog post was added to the database
+  const allBlogPosts = await Blog.find({})
+  assert.strictEqual(allBlogPosts.length, initialBlogs.length + 1)
+
+  const titles = allBlogPosts.map(b => b.title)
+  assert(titles.includes("test"))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
