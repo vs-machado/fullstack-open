@@ -67,6 +67,26 @@ test('delete request successfully removes data from database', async () => {
   assert.strictEqual(allBlogPosts.length, initialBlogs.length - 1)
 })
 
+test('put request successfully updates a database record', async () => {
+  const newBlogPost = {
+    title: 'test',
+    author: 'someone',
+    url: 'www.google.com',
+    likes: 3
+  }
+
+  const response = await api
+    .put('/api/blogs/5a422ee71b54a676234d17fc')
+    .send(newBlogPost)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(response.body.title, 'test')
+  assert.strictEqual(response.body.author, 'someone')
+  assert.strictEqual(response.body.url, 'www.google.com')
+  assert.strictEqual(response.body.likes, 3)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
