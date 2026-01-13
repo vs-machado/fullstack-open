@@ -58,6 +58,15 @@ test('post request to blogs endpoint successfully creates a new blog post', asyn
   assert(titles.includes("test"))
 })
 
+test('delete request successfully removes data from database', async () => {
+  await api
+    .delete('/api/blogs/5a422ee71b54a676234d17fc')
+    .expect(204)
+
+  const allBlogPosts = await Blog.find({})
+  assert.strictEqual(allBlogPosts.length, initialBlogs.length - 1)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
