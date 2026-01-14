@@ -122,6 +122,37 @@ describe('when there is initially one user in db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
   })
+
+  test('another user cant register with the same username', async () => {
+    const usersBeforeRequest = await usersInDb()
+    const usernamesBefore = usersBeforeRequest.map(u => u.username)
+
+    assert(usernamesBefore.includes('root'))
+
+    const newUser = {
+      username: 'root',
+      name: 'root',
+      password: 'password'
+    }
+
+  await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+    .expect(response => {
+      assert.strictEqual(
+        response.body.error,
+        'expected `username` to be unique'
+      )
+    })
+
+    const oldUser = usersBeforeRequest[0]
+    const usersAfterRequest = await usersInDb()
+
+    assert.strictEqual(newUser.username, oldUser.username)
+    assert.strictEqual(usersBeforeRequest.length, usersAfterRequest.length)
+  })
 })
 
 after(async () => {
