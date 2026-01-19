@@ -8,6 +8,7 @@ const Home = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [blogs, setBlogs] = useState([])
   // eslint-disable-next-line no-unused-vars
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -40,6 +41,15 @@ const Home = () => {
     }
   }, [])
 
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const blogs = await blogService.getAll()
+      setBlogs(blogs)
+    } 
+
+    fetchBlogs()
+  }, [])
+
   if(!user) {
     return (
       <LoginForm 
@@ -52,7 +62,7 @@ const Home = () => {
     )
   }
 
-  return <BlogsList user={user} setUser={setUser} />
+  return <BlogsList user={user} setUser={setUser} blogs={blogs} setBlogs={setBlogs} />
 }
 
 export default Home

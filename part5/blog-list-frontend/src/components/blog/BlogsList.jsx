@@ -1,28 +1,18 @@
-import { useState, useEffect } from 'react'
 import Blog from './Blog'
-import blogService from '../../services/blogs'
 import UserInfo from '../auth/UserInfo'
+import CreateBlog from './CreateBlog'
 
-const BlogsList = ({ user, setUser }) => {
-  const [blogs, setBlogs] = useState([])
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const blogs = await blogService.getAll()
-      setBlogs(blogs)
-    } 
-
-    fetchBlogs()
-  }, [])
-
+const BlogsList = ({ user, setUser, blogs, setBlogs }) => {
   return (
     <div>
       <h2>blogs</h2>
 
-      { user && <UserInfo user={user} setUser={setUser}/> }
+      <UserInfo user={user} setUser={setUser}/>
+       
+      <CreateBlog blogs={blogs} setBlogs={setBlogs} />
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog}/>
       )}
     </div>
   )

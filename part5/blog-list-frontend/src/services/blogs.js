@@ -12,7 +12,6 @@ const getAll = async () => {
   return request.data
 }
 
-// TODO: not implemented yet
 const create = async newObject => {
   const config = {
     headers: { Authorization: token }
