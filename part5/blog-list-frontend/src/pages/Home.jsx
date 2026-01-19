@@ -1,8 +1,8 @@
-import BlogsList from "../components/BlogsList"
+import BlogsList from "../components/blog/BlogsList"
 import { useState, useEffect } from 'react'
 import blogService from "../services/blogs"
 import loginService from "../services/login"
-import LoginForm from "../components/Login"
+import LoginForm from "../components/auth/Login"
 
 const Home = () => {
   const [user, setUser] = useState(null)
@@ -16,9 +16,9 @@ const Home = () => {
 
     try {
       const user = await loginService.login({ username, password })
-
+      blogService.setToken(user.token)
       window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
+        'loggedBlogAppUser', JSON.stringify(user)
       )
       setUser(user)
       setUsername('')
@@ -52,7 +52,7 @@ const Home = () => {
     )
   }
 
-  return <BlogsList user={user} />
+  return <BlogsList user={user} setUser={setUser} />
 }
 
 export default Home
