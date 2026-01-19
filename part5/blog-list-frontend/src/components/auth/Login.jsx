@@ -1,6 +1,10 @@
-const LoginForm = ({ handleLogin, username, password, setUsername, setPassword }) => {
+import Notification from "../Notification"
+
+const LoginForm = ({ handleLogin, username, password, setUsername, setPassword, notification }) => {
+  console.log(notification)
   return (
     <>
+      <Notification notification={notification}/>
       <div>
         <h2>log in to application</h2>
       </div>

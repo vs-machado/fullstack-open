@@ -3,14 +3,14 @@ import { useState, useEffect } from 'react'
 import blogService from "../services/blogs"
 import loginService from "../services/login"
 import LoginForm from "../components/auth/Login"
+import { NotificationType } from "../constants/notificationType"
 
 const Home = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [blogs, setBlogs] = useState([])
-  // eslint-disable-next-line no-unused-vars
-  const [errorMessage, setErrorMessage] = useState('')
+  const [notification, setNotification] = useState({ message: null, type: null })
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -25,9 +25,9 @@ const Home = () => {
       setUsername('')
       setPassword('')
     } catch {
-      setErrorMessage('wrong credentials')
+      setNotification({ type: NotificationType.ERROR, message: 'wrong username or password' })
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification({ type: null, message: null })
       }, 5000)
     }
   }
@@ -58,11 +58,12 @@ const Home = () => {
         password={password}
         setUsername={setUsername}
         setPassword={setPassword}
+        notification={notification}
       />
     )
   }
 
-  return <BlogsList user={user} setUser={setUser} blogs={blogs} setBlogs={setBlogs} />
+  return <BlogsList user={user} setUser={setUser} blogs={blogs} setBlogs={setBlogs} notification={notification} setNotification={setNotification} />
 }
 
 export default Home

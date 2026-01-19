@@ -1,7 +1,8 @@
+import { NotificationType } from '../../constants/notificationType'
 import blogService from '../../services/blogs'
 import { useState } from 'react'
 
-const CreateBlog = ({ blogs, setBlogs }) => {
+const CreateBlog = ({ blogs, setBlogs, setNotification }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -17,6 +18,10 @@ const CreateBlog = ({ blogs, setBlogs }) => {
     }
     const createdBlog = await blogService.create(blog)
     setBlogs(blogs.concat(createdBlog))
+    setNotification({ type: NotificationType.SUCCESS, message: `a new blog ${blog.title} by ${blog.author} added`})
+    setTimeout(() => {
+      setNotification({ type: null, message: null })
+    }, 5000)
 
     setTitle('')
     setAuthor('')
