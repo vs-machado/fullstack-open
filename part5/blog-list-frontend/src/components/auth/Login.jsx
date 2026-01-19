@@ -1,4 +1,4 @@
-import Notification from "../Notification"
+import Notification from "../utils/Notification"
 
 const LoginForm = ({ handleLogin, username, password, setUsername, setPassword, notification }) => {
   console.log(notification)

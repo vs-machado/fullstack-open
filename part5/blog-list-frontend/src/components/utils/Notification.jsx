@@ -1,4 +1,4 @@
-import { NotificationType } from '../constants/notificationType'
+import { NotificationType } from '../../constants/notificationType'
 
 const Notification =  ({ notification }) => {
     if (!notification || notification.message === null) {
