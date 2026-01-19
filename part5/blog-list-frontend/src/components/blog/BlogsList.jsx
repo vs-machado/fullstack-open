@@ -5,7 +5,6 @@ import Notification from '../utils/Notification'
 import Toggable from '../utils/Togglable'
 
 const BlogsList = ({ user, setUser, blogs, setBlogs, notification, setNotification}) => {
-
   return (
     <div>
       <h2>blogs</h2>
