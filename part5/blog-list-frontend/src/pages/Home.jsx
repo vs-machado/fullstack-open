@@ -40,11 +40,29 @@ const Home = () => {
       }
 
       await blogService.update(likedPost)
-      setBlogs(blogs.map(b =>
-        b.id === likedPost.id ? likedPost : b
-      ))
+      setBlogs(blogs => 
+        blogs.map(b =>
+          b.id === likedPost.id ? likedPost : b
+        )
+      )
     } catch {
       setNotification({ type: NotificationType.ERROR, message: 'error while trying to like the post' })
+      setTimeout(() => {
+        setNotification({ type: null, message: null })
+      }, 5000)
+    }
+  }
+
+  const removeBlogPost = async (blog) => {
+    const confirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+
+    if (!confirmed) return
+    
+    try {
+      await blogService.deletePost(blog.id)
+      setBlogs(blogs => blogs.filter(b => b.id !== blog.id))
+    } catch {
+      setNotification({ type: NotificationType.ERROR, message: 'error while trying to delete the post' })
       setTimeout(() => {
         setNotification({ type: null, message: null })
       }, 5000)
@@ -82,7 +100,16 @@ const Home = () => {
     )
   }
 
-  return <BlogsList user={user} setUser={setUser} blogs={blogs} setBlogs={setBlogs} notification={notification} setNotification={setNotification} likeBlogPost={likeBlogPost}/>
+  return <BlogsList 
+    user={user} 
+    setUser={setUser} 
+    blogs={blogs} 
+    setBlogs={setBlogs} 
+    notification={notification} 
+    setNotification={setNotification} 
+    likeBlogPost={likeBlogPost}
+    removeBlogPost={removeBlogPost}
+    />
 }
 
 export default Home
