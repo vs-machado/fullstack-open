@@ -32,6 +32,25 @@ const Home = () => {
     }
   }
 
+  const likeBlogPost = async (blog) => {
+    try {
+      const likedPost = {
+        ...blog,
+        likes: blog.likes + 1
+      }
+
+      await blogService.update(likedPost)
+      setBlogs(blogs.map(b =>
+        b.id === likedPost.id ? likedPost : b
+      ))
+    } catch {
+      setNotification({ type: NotificationType.ERROR, message: 'error while trying to like the post' })
+      setTimeout(() => {
+        setNotification({ type: null, message: null })
+      }, 5000)
+    }
+  }
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if(loggedUserJSON) {
@@ -63,7 +82,7 @@ const Home = () => {
     )
   }
 
-  return <BlogsList user={user} setUser={setUser} blogs={blogs} setBlogs={setBlogs} notification={notification} setNotification={setNotification} />
+  return <BlogsList user={user} setUser={setUser} blogs={blogs} setBlogs={setBlogs} notification={notification} setNotification={setNotification} likeBlogPost={likeBlogPost}/>
 }
 
 export default Home
