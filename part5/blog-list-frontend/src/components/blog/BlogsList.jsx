@@ -16,9 +16,12 @@ const BlogsList = ({ user, setUser, blogs, setBlogs, notification, setNotificati
         <CreateBlog blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} />
       </Toggable>
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeBlogPost={() => likeBlogPost(blog)}/>
-      )}
+      {[...blogs]
+        .sort((a, b) => b.likes - a.likes)
+          .map(blog =>
+          <Blog key={blog.id} blog={blog} likeBlogPost={() => likeBlogPost(blog)}/>
+        )
+      }
     </div>
   )
 }
