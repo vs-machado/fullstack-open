@@ -18,15 +18,15 @@ const Blog = ({ blog, user, likeBlogPost, removeBlogPost }) => {
 
   return (
     <div style={blogStyle}>
-      <p>{blog.title} {blog.author}
+      <p id='title-author-input'>{blog.title} {blog.author}
         <button onClick={toggleVisibility}>{isVisible === false ? 'view' : 'hide'}</button>
       </p>
       {
         isVisible &&
         (
           <>
-            <p>{blog.url}</p>
-            <p>likes {blog.likes} <button onClick={likeBlogPost}>like</button></p>
+            <p id='blog-url'>{blog.url}</p>
+            <p id='blog-likes'>likes {blog.likes} <button onClick={likeBlogPost}>like</button></p>
             {isPostOwner && (<button onClick={removeBlogPost}>remove</button>)}
           </>
         )
