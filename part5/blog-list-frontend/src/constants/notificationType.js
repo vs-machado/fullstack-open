@@ -1,4 +1,4 @@
 export const NotificationType = Object.freeze({
-  SUCCESS: "success",
-  ERROR: "error"
+  SUCCESS: 'success',
+  ERROR: 'error'
 })

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, user, likeBlogPost, removeBlogPost }) => {
   const blogStyle = {
@@ -31,7 +31,7 @@ const Blog = ({ blog, user, likeBlogPost, removeBlogPost }) => {
           </>
         )
       }
-    </div>  
+    </div>
   )
 }
 

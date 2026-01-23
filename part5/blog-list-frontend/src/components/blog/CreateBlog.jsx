@@ -18,7 +18,7 @@ const CreateBlog = ({ blogs, setBlogs, setNotification }) => {
     }
     const createdBlog = await blogService.create(blog)
     setBlogs(blogs.concat(createdBlog))
-    setNotification({ type: NotificationType.SUCCESS, message: `a new blog ${blog.title} by ${blog.author} added`})
+    setNotification({ type: NotificationType.SUCCESS, message: `a new blog ${blog.title} by ${blog.author} added` })
     setTimeout(() => {
       setNotification({ type: null, message: null })
     }, 5000)
@@ -35,7 +35,7 @@ const CreateBlog = ({ blogs, setBlogs, setNotification }) => {
         <div>
           <label>
             title:
-            <input 
+            <input
               type="text"
               value={title}
               onChange={({ target }) => setTitle(target.value)} />
@@ -44,7 +44,7 @@ const CreateBlog = ({ blogs, setBlogs, setNotification }) => {
         <div>
           <label>
             author:
-            <input 
+            <input
               type="text"
               value={author}
               onChange={({ target }) => setAuthor(target.value)} />
@@ -53,7 +53,7 @@ const CreateBlog = ({ blogs, setBlogs, setNotification }) => {
         <div>
           <label>
             url:
-            <input 
+            <input
               type="text"
               value={url}
               onChange={({ target }) => setUrl(target.value)} />

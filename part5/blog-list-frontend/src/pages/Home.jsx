@@ -1,9 +1,9 @@
-import BlogsList from "../components/blog/BlogsList"
+import BlogsList from '../components/blog/BlogsList'
 import { useState, useEffect } from 'react'
-import blogService from "../services/blogs"
-import loginService from "../services/login"
-import LoginForm from "../components/auth/Login"
-import { NotificationType } from "../constants/notificationType"
+import blogService from '../services/blogs'
+import loginService from '../services/login'
+import LoginForm from '../components/auth/Login'
+import { NotificationType } from '../constants/notificationType'
 
 const Home = () => {
   const [user, setUser] = useState(null)
@@ -40,7 +40,7 @@ const Home = () => {
       }
 
       await blogService.update(likedPost)
-      setBlogs(blogs => 
+      setBlogs(blogs =>
         blogs.map(b =>
           b.id === likedPost.id ? likedPost : b
         )
@@ -57,7 +57,7 @@ const Home = () => {
     const confirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
 
     if (!confirmed) return
-    
+
     try {
       await blogService.deletePost(blog.id)
       setBlogs(blogs => blogs.filter(b => b.id !== blog.id))
@@ -82,14 +82,14 @@ const Home = () => {
     const fetchBlogs = async () => {
       const blogs = await blogService.getAll()
       setBlogs(blogs)
-    } 
+    }
 
     fetchBlogs()
   }, [])
 
   if(!user) {
     return (
-      <LoginForm 
+      <LoginForm
         handleLogin={handleLogin}
         username={username}
         password={password}
@@ -100,16 +100,16 @@ const Home = () => {
     )
   }
 
-  return <BlogsList 
-    user={user} 
-    setUser={setUser} 
-    blogs={blogs} 
-    setBlogs={setBlogs} 
-    notification={notification} 
-    setNotification={setNotification} 
+  return <BlogsList
+    user={user}
+    setUser={setUser}
+    blogs={blogs}
+    setBlogs={setBlogs}
+    notification={notification}
+    setNotification={setNotification}
     likeBlogPost={likeBlogPost}
     removeBlogPost={removeBlogPost}
-    />
+  />
 }
 
 export default Home

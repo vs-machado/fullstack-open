@@ -1,4 +1,4 @@
-import Notification from "../utils/Notification"
+import Notification from '../utils/Notification'
 
 const LoginForm = ({ handleLogin, username, password, setUsername, setPassword, notification }) => {
   return (
@@ -9,19 +9,19 @@ const LoginForm = ({ handleLogin, username, password, setUsername, setPassword, 
       </div>
       <form onSubmit={handleLogin}>
         <div>
-        <label>
+          <label>
           username
-          <input 
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)} />
-        </label>
+            <input
+              type="text"
+              value={username}
+              onChange={({ target }) => setUsername(target.value)} />
+          </label>
         </div>
         <div>
           <label>
             password
             <input
-              type="text" 
+              type="text"
               value={password}
               onChange={({ target }) => setPassword(target.value)} />
           </label>
