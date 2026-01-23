@@ -77,3 +77,31 @@ test('blog component displays blogs url and likes after clicking on view button'
   expect(inputUrl).toBeInTheDocument()
   expect(inputLikes).toHaveTextContent('1')
 })
+
+test('clicking on like button twice triggers the event handler twice too', async () => {
+  const blog = {
+    user: {
+      id: '123'
+    },
+    title: 'Blog title test',
+    author: 'vs-machado',
+    url: 'www.google.com',
+    likes: 1,
+  }
+
+  const user = {
+    id: '123'
+  }
+  const mockHandler = vi.fn()
+  render(<Blog blog={blog} likeBlogPost={mockHandler} removeBlogPost={mockHandler} user={user} />)
+
+  const userE = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await userE.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await userE.click(likeButton)
+  await userE.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
+})
