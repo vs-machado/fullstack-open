@@ -1,37 +1,26 @@
-import { NotificationType } from '../../constants/notificationType'
-import blogService from '../../services/blogs'
 import { useState } from 'react'
 
-const CreateBlog = ({ blogs, setBlogs, setNotification }) => {
+const CreateBlog = ({ onPostCreate }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const onPostCreate = async (event) => {
+  const addBlog = event => {
     event.preventDefault()
-
-    const blog = {
+    onPostCreate({
       title: title,
       author: author,
       url: url,
       likes: 0
-    }
-    const createdBlog = await blogService.create(blog)
-    setBlogs(blogs.concat(createdBlog))
-    setNotification({ type: NotificationType.SUCCESS, message: `a new blog ${blog.title} by ${blog.author} added` })
-    setTimeout(() => {
-      setNotification({ type: null, message: null })
-    }, 5000)
-
+    })
     setTitle('')
     setAuthor('')
     setUrl('')
   }
-
   return (
     <>
       <h2>create new</h2>
-      <form onSubmit={onPostCreate}>
+      <form onSubmit={addBlog}>
         <div>
           <label>
             title:

@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import CreateBlog from './CreateBlog'
 
 test('blog component displays blogs title and author only initially', () => {
   const blog = {
@@ -104,4 +105,28 @@ test('clicking on like button twice triggers the event handler twice too', async
   await userE.click(likeButton)
 
   expect(mockHandler.mock.calls).toHaveLength(2)
+})
+
+test('<CreateBlog /> form updates parent state and calls onSubmit', async () => {
+  const onPostCreate = vi.fn()
+  const user = userEvent.setup()
+
+  render(<CreateBlog onPostCreate={onPostCreate}/>)
+
+  const titleInput = screen.getByRole('textbox', { name: /title:/i })
+  const authorInput = screen.getByRole('textbox', { name: /author:/i })
+  const urlInput = screen.getByRole('textbox', { name: /url:/i })
+  const createButton= screen.getByRole('button', { name: /create/i })
+
+  await user.type(titleInput, 'title')
+  await user.type(authorInput, 'author')
+  await user.type(urlInput, 'url')
+
+  await user.click(createButton)
+
+  expect(onPostCreate.mock.calls).toHaveLength(1)
+
+  expect(onPostCreate.mock.calls[0][0].title).toBe('title')
+  expect(onPostCreate.mock.calls[0][0].author).toBe('author')
+  expect(onPostCreate.mock.calls[0][0].url).toBe('url')
 })

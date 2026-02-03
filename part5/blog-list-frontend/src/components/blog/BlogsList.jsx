@@ -4,7 +4,7 @@ import CreateBlog from './CreateBlog'
 import Notification from '../utils/Notification'
 import Toggable from '../utils/Togglable'
 
-const BlogsList = ({ user, setUser, blogs, setBlogs, notification, setNotification, likeBlogPost, removeBlogPost }) => {
+const BlogsList = ({ user, setUser, blogs, notification, likeBlogPost, removeBlogPost, onPostCreate }) => {
   return (
     <div>
       <h2>blogs</h2>
@@ -13,7 +13,7 @@ const BlogsList = ({ user, setUser, blogs, setBlogs, notification, setNotificati
       <UserInfo user={user} setUser={setUser}/>
 
       <Toggable buttonLabel={'create new blog'}>
-        <CreateBlog blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} />
+        <CreateBlog onPostCreate={onPostCreate}/>
       </Toggable>
 
       {[...blogs]

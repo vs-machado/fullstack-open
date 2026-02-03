@@ -53,6 +53,15 @@ const Home = () => {
     }
   }
 
+  const onPostCreate = async blogObject => {
+    const createdBlog = await blogService.create(blogObject)
+    setBlogs(blogs.concat(createdBlog))
+    setNotification({ type: NotificationType.SUCCESS, message: `a new blog ${blogObject.title} by ${blogObject.author} added` })
+    setTimeout(() => {
+      setNotification({ type: null, message: null })
+    }, 5000)
+  }
+
   const removeBlogPost = async (blog) => {
     const confirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
 
@@ -106,9 +115,9 @@ const Home = () => {
     blogs={blogs}
     setBlogs={setBlogs}
     notification={notification}
-    setNotification={setNotification}
     likeBlogPost={likeBlogPost}
     removeBlogPost={removeBlogPost}
+    onPostCreate={onPostCreate}
   />
 }
 
