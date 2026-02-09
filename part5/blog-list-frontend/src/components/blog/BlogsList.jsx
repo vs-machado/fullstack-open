@@ -3,8 +3,16 @@ import UserInfo from '../auth/UserInfo'
 import CreateBlog from './CreateBlog'
 import Notification from '../utils/Notification'
 import Toggable from '../utils/Togglable'
+import { useRef } from 'react'
 
 const BlogsList = ({ user, setUser, blogs, notification, likeBlogPost, removeBlogPost, onPostCreate }) => {
+  const blogFormRef = useRef()
+
+  const handleCreate = async (blogObject) => {
+    await onPostCreate(blogObject)
+    blogFormRef.current.toggleVisibility()
+  }
+
   return (
     <div>
       <h2>blogs</h2>
@@ -12,8 +20,8 @@ const BlogsList = ({ user, setUser, blogs, notification, likeBlogPost, removeBlo
       <Notification notification={notification}/>
       <UserInfo user={user} setUser={setUser}/>
 
-      <Toggable buttonLabel={'create new blog'}>
-        <CreateBlog onPostCreate={onPostCreate}/>
+      <Toggable buttonLabel={'create new blog'} ref={blogFormRef}>
+        <CreateBlog onPostCreate={handleCreate}/>
       </Toggable>
 
       {[...blogs]
