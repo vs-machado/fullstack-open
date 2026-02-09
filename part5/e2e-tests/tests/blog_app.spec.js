@@ -5,7 +5,24 @@ const BACKEND_URL = 'http://localhost:3002'
 const login = async (page, { username, password }) => {
   await page.getByLabel('username').fill(username)
   await page.getByLabel('password').fill(password)
-  await page.getByRole('button', { name: 'login' }).click()
+
+  await Promise.all([
+    page.waitForResponse(res => res.url().includes('/api/login')),
+    page.getByRole('button', { name: 'login' }).click()
+  ])
+
+  await page.getByText(`${username} logged in`).waitFor()
+}
+
+const createPost = async (page, { title, author, url }) => {
+  await page.getByTestId('create-blog').click()
+
+  await page.getByLabel('title').fill(title)
+  await page.getByLabel('author').fill(author)
+  await page.getByLabel('url').fill(url)
+
+  await page.getByRole('button', { name: 'Create' }).click()
+  await page.getByTestId('blog-title', { hasText: title }).waitFor()
 }
 
 // Backend must be started with npm run start:test
@@ -39,13 +56,10 @@ describe('Blog app', () => {
     })
 
     test('succeeds with correct credentials', async ({ page }) => {
-      const btn = page.getByRole('button', { name: 'login'})
-
       await login(page, {
         username: 'admin',
         password: 'test'
       })
-      await expect(btn).not.toBeVisible()
 
       const loggedText = page.getByText('admin logged in')
       await expect(loggedText).toBeVisible()
@@ -79,34 +93,57 @@ describe('Blog app', () => {
     })
 
     test('a new blog can be created', async ({ page }) => {
-      const createNewBlogBtn = page.getByRole('button', { name: 'create new blog'})
-      await createNewBlogBtn.click()
+      await createPost(page, {
+        title: 'a good title',
+        author: 'author',
+        url: 'www.google.com'
+      })
+      const blogElement = page.getByTestId('blog').filter({ hasText: 'a good title' })
+      await expect(blogElement).toBeVisible()
 
-      const titleInput = page.getByLabel('title')  
-      const authorInput = page.getByLabel('author')
-      const urlInput = page.getByLabel('url')
+      const blogTitle = blogElement.getByTestId('blog-title')
+      await expect(blogTitle).toBeVisible()
 
-      await titleInput.fill('a good title')
-      await authorInput.fill('bandeclay')
-      await urlInput.fill('www.google.com')
-
-      const createBtn = page.getByRole('button', { name: 'Create'})  
-      await createBtn.click()
-
-      const titleAuthorText = page.getByText('a good title bandeclay') 
-      const viewBtn = page.getByRole('button', { name: 'view'})
-      await expect(titleAuthorText).toBeVisible()
+      const viewBtn = blogElement.getByRole('button', { name: 'view'})
       await expect(viewBtn).toBeVisible()
 
       await viewBtn.click()
-      const urlText = page.getByText('www.google.com') 
+      const urlText = blogElement.getByText('www.google.com') 
       await expect(urlText).toBeVisible()
 
-      const likesText = page.getByText('likes')
+      const likesText = blogElement.getByText('likes')
       await expect(likesText).toBeVisible()
 
-      const hideBtn = page.getByRole('button', { name: 'hide'})
+      const hideBtn = blogElement.getByRole('button', { name: 'hide'})
       await expect(hideBtn).toBeVisible()
+    })
+
+    test('a post can be liked', async ({ page }) => {
+      await createPost(page, {
+        title: 'All You Need Is Love',
+        author: 'The Beatles',
+        url: 'https://music.youtube.com/watch?v=1A8sOOKianA&si=1LL8mpMh8WIzgEvA'
+      })
+      // await expect(page.getByTestId('blog-title').filter({ hasText: 'All You Need Is Love' })).toBeVisible()
+      
+      const viewBtn = page.getByRole('button', { name: 'view'})
+      await expect(viewBtn).toBeVisible()
+      await viewBtn.click()
+
+      const likeBtn = page.getByRole('button', { name: 'like'}) 
+      await expect(likeBtn).toBeVisible()
+
+      const likesText = page.locator('#blog-likes')
+      const likesTextContent = await likesText.textContent()
+      const likesBefore = Number(likesTextContent.match(/\d+/)[0])
+
+      await likeBtn.click()
+
+      // Poll until the likes count updates in the UI
+      await expect.poll(async () => {
+        const text = await page.locator('#blog-likes').textContent()
+        return text
+      }).toContain(`likes ${likesBefore + 1} like`)
     })
   })
 })
