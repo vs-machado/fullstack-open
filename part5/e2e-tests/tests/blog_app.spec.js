@@ -22,7 +22,7 @@ const createPost = async (page, { title, author, url }) => {
   await page.getByLabel('url').fill(url)
 
   await page.getByRole('button', { name: 'Create' }).click()
-  await page.getByTestId('blog-title', { hasText: title }).waitFor()
+  await page.getByTestId('blog-title').filter({ hasText: title }).waitFor()
 }
 
 // Backend must be started with npm run start:test
@@ -212,6 +212,73 @@ describe('Blog app', () => {
       // removeBtn must not be visible to another user
       const removeBtn2 = blogElement.getByRole('button', { name: 'remove'})
       await expect(removeBtn2).toHaveCount(0)
+   })
+
+   test('blog posts are arranged in the order according to the likes', async ({ page, request }) => {
+      await createPost(page, {
+        title: '1984',
+        author: 'David Bowie',
+        url: 'https://music.youtube.com/watch?v=x2xfpMMQIJ8&si=Jmlg1f3p6TIQP6mQ'
+      })
+      await createPost(page, {
+        title: 'Rocky Raccoon',
+        author: 'The Beatles',
+        url: 'https://music.youtube.com/watch?v=sDcDCZGcZj8&si=8xG_4_MR5gN-KV2J'
+      })
+      await createPost(page, {
+        title: 'Over You',
+        author: 'The Velvet Underground',
+        url: 'https://music.youtube.com/watch?v=MJzrnA0SLGg&si=OhtZ8darkbfP5jf6'
+      })
+      await createPost(page, {
+        title: 'As The World Falls Down',
+        author: 'David Bowie',
+        url: 'https://music.youtube.com/watch?v=3baQ9lj3W7E&si=9oc5SnXusGM5ARFA'
+      })
+
+      // Over You
+      const blogElement3 = page.getByTestId('blog').filter({ hasText: 'Over You' })
+      const viewBtn3 = blogElement3.getByRole('button', { name: 'view'})
+      await viewBtn3.click()
+
+      // most liked blog post (over you song)
+      const likeBtn3 = blogElement3.getByRole('button', { name: 'like'})
+      for (let i = 0; i < 3; i++) {
+        await likeBtn3.click()
+        await page.waitForTimeout(100) // small wait for re-render
+      }
+
+      // Rocky Raccoon
+      const blogElement2 = page.getByTestId('blog').filter({ hasText: 'Rocky Raccoon' })
+      const viewBtn2 = blogElement2.getByRole('button', { name: 'view'})
+      await viewBtn2.click()
+
+      const likeBtn2 = blogElement2.getByRole('button', { name: 'like'})
+      for (let i = 0; i < 2; i++) {
+        await likeBtn2.click()
+        await page.waitForTimeout(100) // small wait for re-render
+      }
+
+      // As The World Falls Down
+      const blogElement4 = page.getByTestId('blog').filter({ hasText: 'As The World Falls Down' })
+      const viewBtn4 = blogElement4.getByRole('button', { name: 'view'})
+      await viewBtn4.click()
+
+      const likeBtn4 = blogElement4.getByRole('button', { name: 'like'})
+      await likeBtn4.click()
+      await page.waitForTimeout(100)
+
+      await expect(
+        page.getByTestId('blog').first().getByTestId('blog-title')
+      ).toContainText('Over You')
+
+      const blogs = page.getByTestId('blog')
+      const titles = await blogs.getByTestId('blog-title').allTextContents()
+
+      expect(titles[0]).toContain('Over You')
+      expect(titles[1]).toContain('Rocky Raccoon')
+      expect(titles[2]).toContain('As The World Falls Down')
+      expect(titles[3]).toContain('1984')
    })
   })
 })
