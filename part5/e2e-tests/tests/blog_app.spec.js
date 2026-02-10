@@ -145,5 +145,25 @@ describe('Blog app', () => {
         return text
       }).toContain(`likes ${likesBefore + 1} like`)
     })
+
+    test('user can delete its own blog post', async ({ page }) => {
+      await createPost(page, {
+        title: 'California My Way',
+        author: 'The 5th Dimension',
+        url: 'https://music.youtube.com/watch?v=FUai8-H2Mz8&si=f-VDz9nFIHG3i9ws'
+      })
+      const blogElement = page.getByTestId('blog').filter({ hasText: 'California My Way' })
+      await expect(blogElement).toBeVisible()
+
+      const viewBtn = blogElement.getByRole('button', { name: 'view'})
+      await viewBtn.click()
+      
+      const removeBtn = blogElement.getByRole('button', { name: 'remove'})
+      page.on('dialog', dialog => dialog.accept())
+      await removeBtn.click()
+
+      const blogElementAfterDeletion = page.getByTestId('blog').filter({ hasText: 'California My Way' })
+      await expect(blogElementAfterDeletion).toHaveCount(0)
+   })
   })
 })
