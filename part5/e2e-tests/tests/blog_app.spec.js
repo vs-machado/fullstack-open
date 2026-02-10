@@ -165,5 +165,53 @@ describe('Blog app', () => {
       const blogElementAfterDeletion = page.getByTestId('blog').filter({ hasText: 'California My Way' })
       await expect(blogElementAfterDeletion).toHaveCount(0)
    })
+
+   test('only user who added a blog post can delete it', async ({ page, request }) => {
+      // registers another user
+      await request.post(`${BACKEND_URL}/api/users`, { 
+        data: {
+          name: 'user2',
+          username: 'user2',
+          password: 'test'
+        }
+      })
+
+      // creates a post on the admin user
+      await createPost(page, {
+        title: 'Supersonic Rocket Ship',
+        author: 'The Kinks',
+        url: 'https://music.youtube.com/watch?v=-2RJRrccX7s&si=_JIH7nHJDwUYpEZ2'
+      })
+
+      const blogElement = page.getByTestId('blog').filter({ hasText: 'Supersonic Rocket Ship' })
+      await expect(blogElement).toBeVisible()
+
+      const viewBtn = blogElement.getByRole('button', { name: 'view'})
+      await viewBtn.click()
+      
+      // removeBtn is visible
+      const removeBtn = blogElement.getByRole('button', { name: 'remove'})
+      await expect(removeBtn).toBeVisible()
+
+      // logout
+      const logoutBtn = page.getByRole('button', { name: 'logout' })
+      await logoutBtn.click()
+
+      // login on the 2nd account
+      await login(page, {
+        username: 'user2',
+        password: 'test'
+      })
+
+      const blogElement2 = page.getByTestId('blog').filter({ hasText: 'Supersonic Rocket Ship' })
+      await expect(blogElement2).toBeVisible()
+
+      const viewBtn2 = blogElement.getByRole('button', { name: 'view'})
+      await viewBtn2.click()
+
+      // removeBtn must not be visible to another user
+      const removeBtn2 = blogElement.getByRole('button', { name: 'remove'})
+      await expect(removeBtn2).toHaveCount(0)
+   })
   })
 })
