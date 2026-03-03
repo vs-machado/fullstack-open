@@ -52,6 +52,6 @@ export const voteOnAnecdote = (id) => {
     type: 'VOTE',
     payload: { id }
   }
-}
+} 
 
 export default anecdoteReducer
