@@ -21,7 +21,7 @@ export const showNotification = (message, seconds) => {
       dispatch(removeNotification())
     }, seconds * 1000)
   }
-}
+} 
 
 export const { setNotification, removeNotification } = notificationSlice.actions
 export default notificationSlice.reducer
